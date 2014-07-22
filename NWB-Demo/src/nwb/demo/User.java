@@ -12,6 +12,8 @@ import org.apache.http.impl.client.HttpClients;
 
 public class User
 {
+  int totalBrowsingTime;
+
   CloseableHttpClient httpclient = HttpClients.createDefault();
 
 
@@ -34,6 +36,12 @@ public class User
   public String GetRandomSite()
   {
     return "http://www.google.com";
+  }
+
+
+  public int getTotalBrowsingTime()
+  {
+    return totalBrowsingTime;
   }
 
 }
