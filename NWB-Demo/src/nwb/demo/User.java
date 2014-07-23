@@ -2,6 +2,7 @@
 package nwb.demo;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -15,6 +16,18 @@ public class User
   int totalBrowsingTime;
 
   CloseableHttpClient httpclient = HttpClients.createDefault();
+
+
+  /**
+   * @param args
+   * @throws InterruptedException
+   */
+  public static void main(String[] args)
+      throws InterruptedException
+  {
+    UserBrowsingProfile ubp = new UserBrowsingProfile(2, 2, 20, TimeUnit.SECONDS);
+    ubp.scheduleUserBrowsing();
+  }
 
 
   public String AccessRandomWebsite()

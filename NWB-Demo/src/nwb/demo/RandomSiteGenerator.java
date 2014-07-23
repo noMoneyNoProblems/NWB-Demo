@@ -28,14 +28,14 @@ public class RandomSiteGenerator
 
   private String mNewLine;
 
-  private String[] popularSites = {//
-      "www.stuff.co.nz", //
-          "www.youtube.com", //
-          "www.trademe.co.nz", //
+  private static String[] popularSites = {//
+      "http://www.stuff.co.nz", //
+          "http://www.youtube.com", //
+          "http://www.trademe.co.nz", //
           "http://en.wikipedia.org/wiki/Main_Page", //
           "https://nz.yahoo.com/?p=us", //
           "http://www.nzherald.co.nz/", //
-          "www.google.co.nz", //
+          "http://www.google.co.nz", //
           "http://msn.co.nz" //
       };
 
@@ -57,10 +57,9 @@ public class RandomSiteGenerator
   }
 
 
-  public String GenerateWebsite()
+  public static String chooseUrl()
   {
-    int index = (int)Math.random() * popularSites.length;
+    int index = (int)(Math.random() * popularSites.length);
     return popularSites[index];
   }
-
 }

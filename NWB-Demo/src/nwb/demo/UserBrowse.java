@@ -21,13 +21,16 @@ public class UserBrowse
 
   boolean noLinksOnCurrentPage;
 
+  String mostRecentWebHistory;
+
 
   /**
    * Starts or stops the users browsing depending on time elapsed, depth in website
    * 
+   * @return
    * @throws IOException
    */
-  public void BrowseController(String url)
+  public String BrowseController(String url)
   {
     try
     {
@@ -37,19 +40,20 @@ public class UserBrowse
       {
         if (history.size() < 2)
         {
-          return;
+          return null;
         }
         history.remove(getLastUrl(history));
-        Browse(getLastUrl(history));
+        browse(getLastUrl(history));
       }
       else if (history.size() >= 9)
       {
-        history.remove(getLastUrl(history));
-        Browse(getLastUrl(history));
+        randomLink = getRandomLinkOnPage(getLastUrl(history));
+        history.clear();
+        browse(randomLink.attr("abs:href"));
       }
       else
       {
-        Browse(randomLink.attr("abs:href"));
+        browse(randomLink.attr("abs:href"));
       }
 
     }
@@ -57,6 +61,7 @@ public class UserBrowse
     {
       System.out.println(e);
     }
+    return getLastUrl(history);
   }
 
 
@@ -68,10 +73,18 @@ public class UserBrowse
    * @throws IOException
    */
   public Element getRandomLinkOnPage(String url)
-      throws IOException
+
   {
-    Document doc = Jsoup.connect(url).get();
-    Elements links = doc.select("a[href]");
+    Elements links = null;
+    try
+    {
+      Document doc = Jsoup.connect(url).get();
+      links = doc.select("a[href]");
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
 
     if (links == null || links.size() == 0)
     {
@@ -80,6 +93,7 @@ public class UserBrowse
 
     int index = (int)(Math.random() * links.size());
     return links.get(index);
+
   }
 
 
@@ -118,10 +132,19 @@ public class UserBrowse
    * @return the document acquired by the link.
    * @throws IOException
    */
-  public Document Browse(String url)
-      throws IOException
+  public Document browse(String url)
   {
-    Document doc = Jsoup.connect(url).get();
+    Document doc = new Document("");
+    try
+    {
+      doc = Jsoup.connect(url).get();
+      setMostRecentWebHistory(url, System.currentTimeMillis());
+    }
+    catch (IOException e)
+    {
+      System.out.println(e);
+      setMostRecentWebHistory("ERROR: failed to access URL", System.currentTimeMillis());
+    }
     history.add(url);
 
     return doc;
@@ -133,4 +156,15 @@ public class UserBrowse
     return history.get(history.size() - 1);
   }
 
+
+  public String getMostRecentWebHistory()
+  {
+    return mostRecentWebHistory;
+  }
+
+
+  public void setMostRecentWebHistory(String url, long currentTime)
+  {
+    mostRecentWebHistory = "url : " + url + " Time : " + currentTime;
+  }
 }

@@ -19,6 +19,6 @@ public class RandomSiteGeneratorTest
   public void test()
       throws IOException, SAXException, URISyntaxException
   {
-    rsg.getRandomSite("http://www.nzherald.co.nz/");
+    RandomSiteGenerator.chooseUrl();
   }
 }

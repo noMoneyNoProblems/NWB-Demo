@@ -4,6 +4,8 @@ package nwb.demo.test;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import nwb.demo.UserBrowse;
 
@@ -31,7 +33,14 @@ public class UserBrowseTest
   public void testBrowserControllerWebGet()
       throws IOException
   {
-    userBrowse.BrowseController("http://www.trademe.co.nz/");
+    List<String> history = new ArrayList<String>();
+    history.add("http://www.trademe.co.nz/");
+
+    for (int i = 0; i < 5; i++)
+    {
+      history.add(userBrowse.BrowseController(history.get(i)));
+      System.out.println(userBrowse.getMostRecentWebHistory());
+    }
   }
 
 
@@ -52,8 +61,9 @@ public class UserBrowseTest
   private Element createInvalidLink()
       throws IOException
   {
-    Document doc = userBrowse.Browse("http://www.trademe.co.nz/");
+    Document doc = userBrowse.browse("http://www.trademe.co.nz/");
     Elements e = doc.select("a:contains(Show more featured listings)");
     return e.first();
   }
+
 }
