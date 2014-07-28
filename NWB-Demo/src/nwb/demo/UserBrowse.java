@@ -30,38 +30,36 @@ public class UserBrowse
    * @return
    * @throws IOException
    */
-  public String BrowseController(String url)
+  public String BrowseController(Tabs tabs)
   {
+    String url = tabs.getUrlFromCurrentTab();
+    tabs.chooseNextTabAction();
+    int currentTab = tabs.getLastTabUsed();
+    int latestEntryIndex = tabs.getLatestEntryIndex(tabs.getLastTabUsed());
+
     try
     {
       Element randomLink = getRandomLinkOnPage(url);
 
       if (randomLink == null || !checkLinkValid(randomLink, url))
       {
-        if (history.size() < 2)
+        if (latestEntryIndex < 2)
         {
           return null;
         }
-        history.remove(getLastUrl(history));
-        browse(getLastUrl(history));
-      }
-      else if (history.size() >= 9)
-      {
-        randomLink = getRandomLinkOnPage(getLastUrl(history));
-        history.clear();
-        browse(randomLink.attr("abs:href"));
+        tabs.removeHistoryEntry(currentTab, latestEntryIndex);
+        browse(tabs.getUrlFromTabHistory(currentTab, latestEntryIndex), tabs);
       }
       else
       {
-        browse(randomLink.attr("abs:href"));
+        browse(randomLink.attr("abs:href"), tabs);
       }
-
     }
     catch (IOException e)
     {
       System.out.println(e);
     }
-    return getLastUrl(history);
+    return tabs.getNewUrlFromCurrentTab();
   }
 
 
@@ -132,28 +130,23 @@ public class UserBrowse
    * @return the document acquired by the link.
    * @throws IOException
    */
-  public Document browse(String url)
+  public Document browse(String url, Tabs tabs)
   {
     Document doc = new Document("");
+
     try
     {
       doc = Jsoup.connect(url).get();
-      setMostRecentWebHistory(url, System.currentTimeMillis());
+      setMostRecentWebHistory(url + " tab used : " + tabs.getLastTabUsed());
     }
     catch (IOException e)
     {
       System.out.println(e);
-      setMostRecentWebHistory("ERROR: failed to access URL", System.currentTimeMillis());
+      setMostRecentWebHistory("ERROR: failed to access URL");
     }
-    history.add(url);
+    tabs.setUrlToTabHistory(tabs.getLastTabUsed(), url);
 
     return doc;
-  }
-
-
-  private String getLastUrl(List<String> history)
-  {
-    return history.get(history.size() - 1);
   }
 
 
@@ -163,8 +156,9 @@ public class UserBrowse
   }
 
 
-  public void setMostRecentWebHistory(String url, long currentTime)
+  public void setMostRecentWebHistory(String url)
   {
-    mostRecentWebHistory = "url : " + url + " Time : " + currentTime;
+    mostRecentWebHistory = "url : " + url;
   }
+
 }

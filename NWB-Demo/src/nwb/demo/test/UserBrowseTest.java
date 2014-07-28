@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import nwb.demo.Tabs;
 import nwb.demo.UserBrowse;
 
 import org.jsoup.nodes.Document;
@@ -35,11 +36,13 @@ public class UserBrowseTest
   {
     List<String> history = new ArrayList<String>();
     history.add("http://www.trademe.co.nz/");
+    Tabs tabs = new Tabs();
 
     for (int i = 0; i < 5; i++)
     {
-      history.add(userBrowse.BrowseController(history.get(i)));
+      history.add(userBrowse.BrowseController(tabs)); // history.get(i), tabs));
       System.out.println(userBrowse.getMostRecentWebHistory());
+      tabs.chooseNextTabAction();
     }
   }
 
@@ -61,7 +64,8 @@ public class UserBrowseTest
   private Element createInvalidLink()
       throws IOException
   {
-    Document doc = userBrowse.browse("http://www.trademe.co.nz/");
+    Tabs tabs = new Tabs();
+    Document doc = userBrowse.browse("http://www.trademe.co.nz/", tabs);
     Elements e = doc.select("a:contains(Show more featured listings)");
     return e.first();
   }

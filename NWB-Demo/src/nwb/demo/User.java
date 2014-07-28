@@ -9,6 +9,8 @@ import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 
 
 public class User
@@ -16,6 +18,8 @@ public class User
   int totalBrowsingTime;
 
   CloseableHttpClient httpclient = HttpClients.createDefault();
+
+  private static org.apache.log4j.Logger log = Logger.getLogger(User.class);
 
 
   /**
@@ -25,7 +29,11 @@ public class User
   public static void main(String[] args)
       throws InterruptedException
   {
-    UserBrowsingProfile ubp = new UserBrowsingProfile(2, 2, 20, TimeUnit.SECONDS);
+    PropertyConfigurator.configure(args[0]);
+
+    log.trace("Trace Message!");
+    log.debug("Entry into program.");
+    UserBrowsingProfile ubp = new UserBrowsingProfile(2, 2, 5, TimeUnit.SECONDS);
     ubp.scheduleUserBrowsing();
   }
 

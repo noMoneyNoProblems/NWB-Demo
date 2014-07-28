@@ -6,6 +6,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.log4j.Logger;
+
 
 public class UserBrowsingProfile
 {
@@ -23,6 +25,10 @@ public class UserBrowsingProfile
 
   private UserBrowse userBrowse;
 
+  private Tabs tabs;
+
+  private static org.apache.log4j.Logger log = Logger.getLogger(User.class);
+
 
   public UserBrowsingProfile(long initialDelay, long delay, long stopAfter, TimeUnit timeUnit)
   {
@@ -31,18 +37,18 @@ public class UserBrowsingProfile
     this.stopAfter = stopAfter;
     this.timeUnit = timeUnit;
     userBrowse = new UserBrowse();
+    tabs = new Tabs();
 
   }
 
 
   public void scheduleUserBrowsing()
   {
-    url = RandomSiteGenerator.chooseUrl();
     final Runnable randomBrowser = new Runnable()
     {
       public void run()
       {
-        url = userBrowse.BrowseController(url);
+        userBrowse.BrowseController(tabs);
         updateWebHistoryFile();
       }
     };
@@ -62,6 +68,8 @@ public class UserBrowsingProfile
 
   private void updateWebHistoryFile()
   {
-    System.out.println(userBrowse.getMostRecentWebHistory());
+    // System.out.println(userBrowse.getMostRecentWebHistory());
+    log.debug(userBrowse.getMostRecentWebHistory() + "\n");
+
   }
 }
